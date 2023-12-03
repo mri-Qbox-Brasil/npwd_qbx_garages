@@ -1,4 +1,4 @@
-# npwd_qbx_garage
+# npwd_qbx_garages
 Garage Application for NPWD Phone
 
 ## Dependencies
@@ -9,12 +9,12 @@ Garage Application for NPWD Phone
 ## Requires NPWD 1.5.0 or higher.
 
 ## Install
-1. Download the `npwd_qbx_garage.zip` from releases.
+1. Download the `npwd_qbx_garages.zip` from releases.
 2. Unzip and add the resource to your server resources folder
-3. Ensure `npwd_qbx_garage` BEFORE `npwd`
-4. Add app to NPWD config.json in the `apps` section `"apps": ["npwd_qbx_garage"]`
+3. Ensure `npwd_qbx_garages` BEFORE `npwd`
+4. Add app to NPWD config.json in the `apps` section `"apps": ["npwd_qbx_garages"]`
 
-#### Do not change resource name. If you want to change it, you'll have to download the source code, alter `fetchNui.ts`, and build the project.
+#### Do not change the resource name. You must download the source code, alter `fetchNui.ts`, and build the project to change it.
 
 ## Screenshots
-![dark](https://github.com/dusan01/npwd_qbx_garage/assets/7904473/16e12ddc-2254-4a4e-aafb-63bf1c2bd4c3) ![light](https://github.com/dusan01/npwd_qbx_garage/assets/7904473/60d86468-daae-4c55-a93e-3316998105f8)
+![dark](https://github.com/Qbox-project/npwd_qbx_garages/assets/7904473/0c67b147-ae82-47f4-acaf-83cd7c283e46) ![light](https://github.com/Qbox-project/npwd_qbx_garages/assets/7904473/ff44f9b4-7c63-41c0-8201-8b6d7a993446)
