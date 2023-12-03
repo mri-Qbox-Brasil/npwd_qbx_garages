@@ -1,55 +1,70 @@
-name: Build & Release
+# Based off of https://github.com/overextended/ox_lib/blob/master/.github/workflows/release.yml
+name: Release
 
 on:
   push:
     tags:
-      - "*"
+      - 'v*.*.*'
+  workflow_dispatch:
+
+
 jobs:
-  build:
+  create-release:
+    name: Build and Create Tagged Release
     runs-on: ubuntu-latest
-
     steps:
-    - name: Get tag
-      run: echo ::set-output name=VERSION_TAG::${GITHUB_REF/refs\/tags\//}
-      id: get_tag
+      - name: Install archive tools
+        run: sudo apt install zip
 
-    - name: Checkout source code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        ref: ${{ github.ref }}
+      - name: Checkout source code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
 
-    - name: Setup node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 16.x
-        cache: 'yarn'
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
-    - name: Install dependencies & Build
-      run: yarn --frozen-lockfile && yarn build
+      - name: Bump manifest version
+        run: node .github/actions/bump-manifest-version.js
+        env:
+          TGT_RELEASE_VERSION: ${{ github.ref_name }}
 
-    - name: Bundle
-      run: |
-        mkdir -p ./temp/npwd_qbx_garage
-        cp ./{README.md,fxmanifest.lua} ./temp/npwd_qbx_garage
-        cp -r ./client ./temp/npwd_qbx_garage
-        cp -r ./server ./temp/npwd_qbx_garage
-        cp -r ./web ./temp/npwd_qbx_garage
-        cd ./temp && zip -r ../npwd_qbx_garage.zip ./npwd_qbx_garage
-    - name: Create Release
-      uses: "marvinpinto/action-automatic-releases@v1.2.1"
-      id: auto_release
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        title: NPWD QBX Garage App | ${{ steps.get_tag.outputs.VERSION_TAG }}
-        prerelease: false
-        files: npwd_qbx_garage.zip
+      - name: Push manifest change
+        uses: EndBug/add-and-commit@v8
+        with:
+          add: fxmanifest.lua
+          push: true
+          author_name: Manifest Bumper
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
+          message: 'chore: bump manifest version to ${{ github.ref_name }}'
 
-      env:
-        CI: false
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update tag ref
+        uses: EndBug/latest-tag@latest
+        with:
+          tag-name: ${{ github.ref_name }}
+
+      - name: Bundle files
+        run: |
+          mkdir -p ./temp/qbx_core
+          cp ./{LICENSE,README.md,fxmanifest.lua,qbx_core.sql} ./temp/qbx_core
+          cp -r ./{client,locale,modules,server,shared,bridge,config} ./temp/qbx_core
+          cd ./temp && zip -r ../qbx_core.zip ./qbx_core
+
+      - name: Create Release
+        uses: 'marvinpinto/action-automatic-releases@v1.2.1'
+        id: auto_release
+        with:
+          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          title: ${{ env.RELEASE_VERSION }}
+          prerelease: false
+          files: qbx_core.zip
+
+        env:
+          CI: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
