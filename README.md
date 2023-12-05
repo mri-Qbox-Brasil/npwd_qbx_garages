@@ -15,10 +15,10 @@ Garage Application for NPWD Phone
 
 How to build the source code:
 
-    git  clone  https://github.com/Qbox-project/npwd_qbx_garages.git
-    cd  npwd_qbx_garages/src
-    pnpm  i
-    pnpm  build
+    git clone https://github.com/Qbox-project/npwd_qbx_garages.git
+    cd npwd_qbx_garages/src
+    pnpm i
+    pnpm build
 
 Once it's build, follow the steps below:
 1. Ensure `npwd_qbx_garages` BEFORE `npwd`
