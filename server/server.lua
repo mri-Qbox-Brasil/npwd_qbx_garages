@@ -1,41 +1,36 @@
 local config = require '@qbx_garages.config.shared'
+local VEHICLES = exports.qbx_core:GetVehiclesByName()
 
-RegisterNetEvent("npwd:qbx_garage:getVehicles", function()
-	local src = source
-	local player = exports.qbx_core:GetPlayer(src)
-	local garageresult = MySQL.query.await('SELECT * FROM player_vehicles WHERE citizenid = ?', {player.PlayerData.citizenid})
+lib.callback.register('npwd_qbx_garages:server:getPlayerVehicles', function(source)
+	local player = exports.qbx_core:GetPlayer(source)
+	local result = MySQL.query.await('SELECT * FROM player_vehicles WHERE citizenid = ?', {player.PlayerData.citizenid})
 
-	if garageresult[1] ~= nil then
-		for _, v in pairs(garageresult) do
-			local vehicleModel = v.vehicle
-			v.model = vehicleModel
+	if result[1] ~= nil then
+		for _, v in pairs(result) do
+			local model = v.vehicle
+
+			v.model = model
 			v.vehicle = 'Unknown'
 			v.brand = 'Vehicle'
 
 			if v.state == 0 then
-				v.state = "out"
+				v.state = 'out'
 			elseif v.state == 1 then
-				v.state = "garaged"
+				v.state = 'garaged'
 			elseif v.state == 2 then
-				v.state = "impounded"
-				-- elseif v.state == 3 then -- add new state for seized vehicles
-				-- 	v.state = "seized"
+				v.state = 'impounded'
 			else
-				v.state = "unknown"
+				v.state = 'unknown'
 			end
 
-			if exports.qbx_core:GetVehiclesByName()[vehicleModel] then
-				v.vehicle = exports.qbx_core:GetVehiclesByName()[vehicleModel].name
-				v.brand = exports.qbx_core:GetVehiclesByName()[vehicleModel].brand
+			if VEHICLES[model] then
+				v.vehicle = VEHICLES[model].name
+				v.brand = VEHICLES[model].brand
 			end
 
-			if (config.garages[v.garage] ~= nil) then
-				v.garage = config.garages[v.garage].label
-			else
-				v.garage = "Unknown Garage"
-			end
+			v.garage = config.garages[v.garage]?.label or 'Unknown Garage'
 		end
 
-		TriggerClientEvent('npwd:qbx_garage:sendVehicles', src, garageresult)
+		return result
 	end
 end)
