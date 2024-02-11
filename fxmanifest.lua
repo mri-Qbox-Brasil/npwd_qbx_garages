@@ -3,6 +3,7 @@ game 'gta5'
 
 description 'Qbox Garages app for NPWD'
 version '1.0.0'
+repository 'https://github.com/Qbox-Project/npwd_qbx_garages'
 
 client_script 'client/client.lua'
 
