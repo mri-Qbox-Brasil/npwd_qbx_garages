@@ -1,3 +1,5 @@
+lib.versionCheck('Qbox-project/npwd_qbx_garages')
+
 local config = require '@qbx_garages.config.shared'
 local VEHICLES = exports.qbx_core:GetVehiclesByName()
 
