@@ -1,5 +1,8 @@
-fx_version "cerulean"
-game "gta5"
+fx_version 'cerulean'
+game 'gta5'
+
+description 'Qbox Garages app for NPWD'
+version '1.0.0'
 
 client_script 'client/client.lua'
 
@@ -22,3 +25,4 @@ files {
 
 lua54 'yes'
 use_experimental_fxv2_oal 'yes'
+provide 'npwd_qb_garage'
