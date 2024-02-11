@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { NuiProvider } from 'react-fivem-hooks';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { Header } from './styles/header.styles';
-import { IPhoneSettings } from '@project-error/npwd-types';
+import { IPhoneSettings } from '@npwd/types';
 import { i18n } from 'i18next';
-import { IconButton, Theme, StyledEngineProvider, ThemeProvider, Typography } from '@mui/material';
+import { IconButton, Theme, StyledEngineProvider, Typography } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
+import ThemeSwitchProvider from './ThemeSwitchProvider';
 import { GarageItem } from './types/garage';
 import { MockGarage } from './utils/constants';
 import { buildRespObj } from './utils/misc';
 import { VehicleList } from './components/VehicleList';
 import fetchNui from './utils/fetchNui';
 import { ServerPromiseResp } from './types/common';
+import { RecoilEnv, RecoilRoot } from 'recoil';
 
-const Container = styled.div<{ isDarkMode: any }>`
+RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
+
+const Container = styled.div<{ isDarkMode: boolean }>`
   flex: 1;
   padding: 1.5rem;
   display: flex;
@@ -26,9 +29,10 @@ const Container = styled.div<{ isDarkMode: any }>`
   ${({ isDarkMode }) =>
     isDarkMode &&
     `
-    background-color: rgb(23 23 23 / 1);
-  `}
+  background-color: rgb(23 23 23 / 1);
+`}
 `;
+
 interface AppProps {
   theme: Theme;
   i18n: i18n;
@@ -37,8 +41,7 @@ interface AppProps {
 
 const App = (props: AppProps) => {
   const history = useHistory();
-  const [vehicles, setVehicles] = useState<GarageItem[] | undefined>([]);
-  const [mappedVeh, setMappedVeh] = useState<any>(null);
+  const [mappedVeh, setMappedVeh] = useState<Map<string, GarageItem[]>>(new Map<string, GarageItem[]>());
 
   const isDarkMode = props.theme.palette.mode === 'dark';
 
@@ -48,26 +51,20 @@ const App = (props: AppProps) => {
       null,
       buildRespObj(MockGarage)
       ).then((resp) => {
-        setVehicles(resp.data);
+        if (!resp.data) return;
+        const mappedVehicles = new Map<string, GarageItem[]>()
+        resp.data.forEach((vehicle: GarageItem) => {
+          if (!mappedVehicles.get(vehicle.type)) mappedVehicles.set(vehicle.type, []);
+          mappedVehicles.get(vehicle.type)?.push(vehicle);
+        });
+
+        setMappedVeh(mappedVehicles);
     });
-  }, []);
-
-
-  useEffect(() => {
-    if (vehicles) {
-      const mappedVehicles = vehicles?.reduce((vehs: any, vehicle: any) => {
-        if (!vehs[vehicle.type]) vehs[vehicle.type] = [];
-        vehs[vehicle.type].push(vehicle);
-        return vehs;
-      }, {});
-
-      setMappedVeh(mappedVehicles);
-    }
-  }, [vehicles]);
+  });
 
   return (
     <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={props.theme}>
+      <ThemeSwitchProvider mode={props.theme.palette.mode}>
         <Container isDarkMode={isDarkMode}>
           <Header>
             <IconButton color="default" onClick={() => history.goBack()}>
@@ -77,17 +74,17 @@ const App = (props: AppProps) => {
               Garage
             </Typography>
           </Header>
-          {mappedVeh && <VehicleList isDarkMode={isDarkMode} vehicles={mappedVeh} />}
+          {mappedVeh.size > 0 ? <VehicleList isDarkMode={isDarkMode} vehicles={mappedVeh} /> : <Typography align="center" fontSize={20} color={isDarkMode ? "white" : "black"}>No vehicles to display</Typography>}
         </Container>
-      </ThemeProvider>
+      </ThemeSwitchProvider>
     </StyledEngineProvider>
   );
 };
 
 const WithProviders: React.FC<AppProps> = (props) => (
-  <NuiProvider>
+  <RecoilRoot override key="npwd_qbx_garages">
     <App {...props} />
-  </NuiProvider>
+  </RecoilRoot>
 );
 
 export default WithProviders;

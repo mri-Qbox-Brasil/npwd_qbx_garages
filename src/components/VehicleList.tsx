@@ -21,11 +21,11 @@ import VehicleDetails from './VehicleDetails';
 
 interface VehicleListProps {
   isDarkMode: boolean;
-  vehicles: any;
+  vehicles: Map<string, GarageItem[]>;
 }
 
 export const VehicleList: React.FC<VehicleListProps> = ({ vehicles, isDarkMode }) => {
-  const [collapseId, setCollapseId] = useState<string | null>('car');
+  const [collapseId, setCollapseId] = useState<string | null>(null);
   const typeIcon = {
     car: {
       icon: <DirectionsCarIcon sx={{ fontSize: 35 }} />,
@@ -70,12 +70,12 @@ export const VehicleList: React.FC<VehicleListProps> = ({ vehicles, isDarkMode }
   };
 
   const expandItem = (id: string) => {
-    setCollapseId(id);
+    setCollapseId(id !== collapseId ? id : null);
   };
 
   return (
     <Box>
-      {Object.keys(vehicles).map((key) => (
+      {Array.from(vehicles.keys()).map(key => (
         <List
           subheader={
             <ListSubheader
@@ -93,7 +93,7 @@ export const VehicleList: React.FC<VehicleListProps> = ({ vehicles, isDarkMode }
           }
         >
           <Collapse in={collapseId === key}>
-            {vehicles[key].map((veh: GarageItem) => {
+            {vehicles.get(key)?.map(veh => {
               return (
                 <ListItem disablePadding sx={{ marginTop: '10px' }}>
                   <Accordion

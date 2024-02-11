@@ -1,9 +1,9 @@
 local function findVehFromPlateAndLocate(plate)
-	local gameVehicles = GetVehicles()
+	local gameVehicles = GetGamePool('CVehicle')
 	for i = 1, #gameVehicles do
 		local vehicle = gameVehicles[i]
 		if DoesEntityExist(vehicle) then
-			if GetPlate(vehicle) == plate then
+			if qbx.getVehiclePlate(vehicle) == plate then
 				local vehCoords = GetEntityCoords(vehicle)
 				SetNewWaypoint(vehCoords.x, vehCoords.y)
 				return true

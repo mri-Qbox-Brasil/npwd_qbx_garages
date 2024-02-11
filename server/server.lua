@@ -3,34 +3,34 @@ local VEHICLES = exports.qbx_core:GetVehiclesByName()
 
 lib.callback.register('npwd_qbx_garages:server:getPlayerVehicles', function(source)
 	local player = exports.qbx_core:GetPlayer(source)
-	local result = MySQL.query.await('SELECT * FROM player_vehicles WHERE citizenid = ?', {player.PlayerData.citizenid})
+	if not player then return {} end
 
-	if result[1] ~= nil then
-		for _, v in pairs(result) do
-			local model = v.vehicle
+	local result = MySQL.query.await('SELECT * FROM player_vehicles WHERE citizenid = ?', { player.PlayerData.citizenid })
+	for i = 1, #result do
+		local vehicleData = result[i]
+		local model = vehicleData.vehicle
 
-			v.model = model
-			v.vehicle = 'Unknown'
-			v.brand = 'Vehicle'
+		vehicleData.model = model
+		vehicleData.vehicle = 'Unknown'
+		vehicleData.brand = 'Vehicle'
 
-			if v.state == 0 then
-				v.state = 'out'
-			elseif v.state == 1 then
-				v.state = 'garaged'
-			elseif v.state == 2 then
-				v.state = 'impounded'
-			else
-				v.state = 'unknown'
-			end
-
-			if VEHICLES[model] then
-				v.vehicle = VEHICLES[model].name
-				v.brand = VEHICLES[model].brand
-			end
-
-			v.garage = config.garages[v.garage]?.label or 'Unknown Garage'
+		if vehicleData.state == 0 then
+			vehicleData.state = 'out'
+		elseif vehicleData.state == 1 then
+			vehicleData.state = 'garaged'
+		elseif vehicleData.state == 2 then
+			vehicleData.state = 'impounded'
+		else
+			vehicleData.state = 'unknown'
 		end
 
-		return result
+		if VEHICLES[model] then
+			vehicleData.vehicle = VEHICLES[model].name
+			vehicleData.brand = VEHICLES[model].brand
+		end
+
+		vehicleData.garage = config.garages[vehicleData.garage]?.label or 'Unknown Garage'
 	end
+
+	return result
 end)
