@@ -37,7 +37,7 @@ RegisterNUICallback("npwd:qbx_garage:requestWaypoint", function(data, cb)
         content = findVehFromPlateAndLocate(data.plate) and locale('notification.marked') or locale('notification.cannot_locate'),
         keepOpen = false,
         duration = 5000,
-        path = '/npwd_qbx_mail',
+        path = '/npwd_qbx_garages',
     })
 	cb({})
 end)
