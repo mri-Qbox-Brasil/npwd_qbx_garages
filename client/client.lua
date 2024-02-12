@@ -31,11 +31,13 @@ RegisterNUICallback("npwd:qbx_garage:getVehicles", function(_, cb)
 end)
 
 RegisterNUICallback("npwd:qbx_garage:requestWaypoint", function(data, cb)
-	local plate = data.plate
-	if findVehFromPlateAndLocate(plate) then
-		exports.qbx_core:Notify("Your vehicle has been marked", "success")
-	else
-		exports.qbx_core:Notify("This vehicle cannot be located", "error")
-	end
+    exports.npwd:createNotification({
+        notisId = 'npwd:qbx_garage:requestWaypoint',
+        appId = 'npwd_qbx_garages',
+        content = findVehFromPlateAndLocate(data.plate) and locale('notification.marked') or locale('notification.cannot_locate'),
+        keepOpen = false,
+        duration = 5000,
+        path = '/npwd_qbx_mail',
+    })
 	cb({})
 end)
