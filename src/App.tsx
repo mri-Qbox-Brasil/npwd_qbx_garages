@@ -60,7 +60,7 @@ const App = (props: AppProps) => {
 
         setMappedVeh(mappedVehicles);
     });
-  });
+  }, []);
 
   return (
     <StyledEngineProvider injectFirst>
