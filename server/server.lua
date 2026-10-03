@@ -1,6 +1,7 @@
 lib.versionCheck('Qbox-project/npwd_qbx_garages')
+assert(GetResourceState('qbx_garages') == 'started', 'qbx_garages is not started')
 
-local config = require '@qbx_garages.config.shared'
+local garageConfig = exports.qbx_garages:GetGarages()
 local VEHICLES = exports.qbx_core:GetVehiclesByName()
 
 lib.callback.register('npwd_qbx_garages:server:getPlayerVehicles', function(source)
@@ -31,8 +32,18 @@ lib.callback.register('npwd_qbx_garages:server:getPlayerVehicles', function(sour
 			vehicleData.brand = VEHICLES[model].brand
 		end
 
-		vehicleData.garage = config.garages[vehicleData.garage]?.label or locale('states.garage_unknown')
+		vehicleData.garage = garageConfig[vehicleData.garage]?.label or locale('states.garage_unknown')
 	end
 
 	return result
+end)
+
+AddEventHandler('onResourceStart', function(resourceName)
+    if resourceName == 'qbx_garages' then
+        garageConfig = exports.qbx_garages:GetGarages()
+    end
+end)
+
+AddEventHandler('qbx_garages:server:garageRegistered', function(garageName, newGarageConfig)
+    garageConfig[garageName] = newGarageConfig
 end)
