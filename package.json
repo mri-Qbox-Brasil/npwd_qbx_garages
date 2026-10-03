@@ -5,25 +5,27 @@
   "devDependencies": {
     "@citizenfx/client": "2.0.7330-1",
     "@citizenfx/server": "2.0.7330-1",
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.15.4",
-    "@mui/material": "^5.15.4",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^5.18.0",
+    "@mui/material": "^5.18.0",
     "@npwd/types": "1.6.1",
-    "@originjs/vite-plugin-federation": "^1.3.3",
-    "@types/node": "^20.10.8",
-    "@types/react": "^18.2.47",
-    "@types/react-dom": "^18.2.18",
+    "@originjs/vite-plugin-federation": "^1.4.1",
+    "@types/history": "4.7.11",
+    "@types/node": "^20.19.43",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.2",
-    "@vitejs/plugin-react": "^4.2.1",
-    "add": "^2.0.6",
-    "concurrently": "^8.2.2",
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^10.0.3",
     "cross-env": "^7.0.3",
-    "react-refresh": "^0.14.0",
-    "react-refresh-typescript": "^2.0.9",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.11"
+    "esbuild": "^0.25.12",
+    "eslint": "^8.57.1",
+    "react-refresh": "^0.14.2",
+    "react-refresh-typescript": "^2.0.12",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.3"
   },
   "scripts": {
     "dev": "vite --mode dev",
@@ -37,16 +39,18 @@
     "watch:nui": "esbuild src/index.tsx --outdir=dist/html --watch --target=es6 --bundle --loader:.png=dataurl"
   },
   "dependencies": {
-    "esbuild": "^0.19.11",
-    "eslint": "^8.56.0",
-    "file-loader": "^6.2.0",
-    "i18next": "^23.7.16",
-    "prettier": "^3.1.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hot-loader": "^4.13.1",
-    "react-router-dom": "5.3.0",
+    "i18next": "^23.16.8",
+    "prettier": "^3.9.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "5.3.4",
     "recoil": "^0.7.7",
-    "vite-plugin-top-level-await": "^1.4.1"
-  }
+    "vite-plugin-top-level-await": "^1.6.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "uuid": "^11.1.1"
+    }
+  },
+  "packageManager": "pnpm@8.15.9+sha512.499434c9d8fdd1a2794ebf4552b3b25c0a633abcee5bb15e7b5de90f32f47b513aca98cd5cfd001c31f0db454bc3804edccd578501e4ca293a6816166bbd9f81"
 }
